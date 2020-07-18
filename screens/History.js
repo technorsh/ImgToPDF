@@ -29,7 +29,7 @@ const HistoryListItem = (props) => {
       const result = await Share.open({
         title:"Shared from ImgToPDF Converter",
         message:"Shared from ImgToPDF Converter",
-        url:file
+        url:"file://"+file
       });
     } catch (error) {
         console.log(error)
