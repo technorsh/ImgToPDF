@@ -78,7 +78,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    entryFile: "index.js",
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -118,7 +119,9 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
-def enableHermes = project.ext.react.get("enableHermes", false);
+def enableHermes = project.ext.react.get("enableHermes", true);
+
+def taskName = getGradle().getStartParameter().getTaskRequests().toString()
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -142,7 +145,7 @@ android {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
+            universalApk true  // If true, also generate a universal APK
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
@@ -164,6 +167,16 @@ android {
     packagingOptions {
         // exclude ARMEABI native so file, ARMEABI has been removed in NDK r17.
         exclude "lib/armeabi/**"
+        exclude "**/libjsc*.so"
+        if (taskName.contains("InternalDebug")) {
+            // Release libs take precedence and must be removed
+            // to allow debugging
+            exclude '**/libhermes-executor-release.so'
+        } else {
+            // Reduce size by deleting the debugger/inspector
+            exclude '**/libhermes-inspector.so'
+            exclude '**/libhermes-executor-debug.so'
+        }
     }
 
     buildTypes {

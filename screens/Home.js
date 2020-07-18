@@ -26,7 +26,6 @@ import DraggableFlatList from 'react-native-draggable-flatlist';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import PDFForm from "./../components/PDFForm";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import AlertComponent from "./../components/Alert";
 import uuid from "uuid/v4";
 

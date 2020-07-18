@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from "moment";
 import Share from "react-native-share";
 import RNFS from "react-native-fs"
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   DotIndicator,
 } from 'react-native-indicators';
@@ -80,7 +80,7 @@ const HistoryListItem = (props) => {
             }}
             >
             <View style={{flexDirection:"row",alignItems:"center"}}>
-              <MaterialCommunityIcons name="file-pdf" size={40} color="red" />
+              <Icon name="file-pdf-o" size={34} color="red" style={{padding:5}}/>
               <View style={{flexGrow:1,flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"center"}}>
                   <View style={{flexDirection:"row",alignItems:"center"}}>
