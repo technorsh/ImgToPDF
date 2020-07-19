@@ -37,11 +37,12 @@ function ListViewItems(props){
   const { item , drag , isActive , index ,path } = props;
 
   const date = item.modificationDate/1000;
-  const filename = item.path.split("/")[item.path.split("/").length -1 ];
+  const file = item.path.split("/")[item.path.split("/").length -1 ];
+  const filename = file.split("-")[file.split("-").length -1];
 
-  const editImage = () => {
+  const editImage = ( path , index ) => {
     ImagePicker.openCropper({
-      path: item.path,
+      path: path,
       enableRotationGesture:true,
       freeStyleCropEnabled:true,
     }).then(image => {
@@ -96,9 +97,9 @@ function ListViewItems(props){
             <View style={{flexGrow:1,flexDirection:"column",justifyContent:"space-between",padding:5}}>
               <View style={{flexGrow:1,flexDirection:"column",justifyContent:"space-around"}}>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <Icon name="file-photo-o" size={11} color="violet" />
+                    <Icon name="file-photo-o" size={12} color="grey" />
                     <View style={{flexGrow:1,width:0}}>
-                      <Text ellipsizeMode='tail' numberOfLines={1} style={{fontWeight:"bold",flexWrap:"wrap",color:"gray"}}> {filename}</Text>
+                      <Text ellipsizeMode='tail' numberOfLines={1} style={{fontWeight:"bold",flexWrap:"wrap",color:"gray"}}> {filename} </Text>
                     </View>
                 </View>
                 <View style={{marginTop:2,flexDirection:"row",justifyContent:"space-around"}}>
@@ -122,10 +123,10 @@ function ListViewItems(props){
               </View>
             </View>
             <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"center"}}>
-              <TouchableOpacity style={{paddingRight:15}} onPress={()=>editImage()}>
+              <TouchableOpacity style={{paddingRight:15}} onPress={()=>editImage(item.path,index)}>
                   <Icon name="edit" size={22} color="#900" />
               </TouchableOpacity>
-              <TouchableOpacity style={{paddingRight:15}} onPress={()=>removeImage()}>
+              <TouchableOpacity style={{paddingRight:15}} onPress={()=>removeImage(index)}>
                   <Icon name="trash" size={22} color="#900" />
               </TouchableOpacity>
             </View>
@@ -141,6 +142,7 @@ function ListViewItems(props){
         <ImageViewer
           index={index}
           imageUrls={paths}
+          saveToLocalByLongPress={false}
           />
       </Modal>
     </View>

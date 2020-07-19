@@ -19,7 +19,7 @@ import RNImageToPdf from "react-native-image-to-pdf";
 import RNFS from "react-native-fs";
 import moment from "moment";
 import { setImages } from "./../store/actions"
-import { openFile } from "./../common";
+import { openFile , onShare } from "./../common";
 
 import {
   PacmanIndicator,
@@ -86,52 +86,63 @@ class PDFForm extends React.Component{
             let date = moment();
             RNFS.mkdir(path).then(res => {
               RNFS.moveFile(response.filePath,path+filename).then(res => {
-                this.props.setImages([]);
-                AsyncStorage.getItem('downloaded',(err,result) => {
-                   let prevData = JSON.parse(result);
-                   if(result!==null){
-                       let newDataEnter = {
-                           "id":uuid(),
-                           "file":path+filename,
-                           "date":date,
-                       }
-                       prevData.push(newDataEnter)
-                       AsyncStorage.setItem('downloaded', JSON.stringify(prevData),(err)=>{
-                       if(err!==null){
-                           console.log(err)
-                       }
-                       });
-                   }
-                   else{
-                       AsyncStorage.setItem('downloaded', JSON.stringify([{
-                           "id":uuid(),
-                           "file":path+filename,
-                           "date":date,
-                       }]),(err)=>{
-                           if(err!==null){
-                               alert(err)
-                           }
-                       });
-                   }
-                 });
-                 ToastAndroid.showWithGravity(
-                   "Succesfully Converted to PDF !!!",
-                   ToastAndroid.LONG,
-                   ToastAndroid.BOTTOM
-                 );
-                 Alert.alert(
-                  "File Location :",
-                  path+filename,
-                  [
-                    { text :"open", onPress : () => openFile(path+filename) },
-                    { text: "OK", onPress: () => {} },
-                  ],
-                  { cancelable: false }
-                );
-                this.setState({
-                  loading:false
+                RNFS.stat(path+filename).then((res)=>{
+                  this.props.setImages([]);
+                  AsyncStorage.getItem('downloaded',(err,result) => {
+                     let prevData = JSON.parse(result);
+                     if(result!==null){
+                         let newDataEnter = {
+                             "id":uuid(),
+                             "file":res.path,
+                             "date":date,
+                             "size":res.size
+                         }
+                         prevData.push(newDataEnter)
+                         AsyncStorage.setItem('downloaded', JSON.stringify(prevData),(err)=>{
+                         if(err!==null){
+                             console.log(err)
+                         }
+                         });
+                     }
+                     else{
+                         AsyncStorage.setItem('downloaded', JSON.stringify([{
+                             "id":uuid(),
+                             "file":res.path,
+                             "date":date,
+                             "size":res.size
+                         }]),(err)=>{
+                             if(err!==null){
+                                 alert(err)
+                             }
+                         });
+                     }
+                   });
+                   ToastAndroid.showWithGravity(
+                     "Succesfully Converted to PDF !!!",
+                     ToastAndroid.LONG,
+                     ToastAndroid.BOTTOM
+                   );
+                   Alert.alert(
+                    "File Location :",
+                    path+filename,
+                    [
+                      { text :"share", onPress : () => onShare("file://"+path+filename) },
+                      { text :"open", onPress : () => openFile(path+filename) },
+                      { text: "OK", onPress: () => {} },
+                    ],
+                    { cancelable: false }
+                  );
+                  this.setState({
+                    loading:false
+                  })
+                  this.props.close();
+                }).catch((err)=>{
+                  this.setState({
+                    loading:false
+                  })
+                  this.props.close();
+                  console.log(err);
                 })
-                this.props.close();
               }).catch((err)=>{
                 this.setState({
                   loading:false
