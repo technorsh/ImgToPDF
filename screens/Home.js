@@ -28,6 +28,13 @@ import PDFForm from "./../components/PDFForm";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AlertComponent from "./../components/Alert";
 import uuid from "uuid/v4";
+import  admob, {
+  BannerAdSize,
+  BannerAd,
+  AdEventType
+} from '@react-native-firebase/admob';
+
+import { adHomeUnitId , interstitialAddGallery } from "./../common";
 
 const { width , height } = Dimensions.get("window");
 
@@ -38,8 +45,14 @@ function Home(props){
   const [ alert , setAlert ] = useState(false);
   const [ openPDFMenu , setOpenPDFMenu ] = useState(false);
 
+
   useEffect(()=>{
     SplashScreen.hide();
+    interstitialAddGallery.onAdEvent((type, error, reward) => {
+      if (type === AdEventType.LOADED) {
+        interstitialAddGallery.show();
+      }
+    });
     console.log("App Started...")
   },[]);
 
@@ -84,8 +97,10 @@ function Home(props){
   const handleAddOpenImagePicker = () => {
     setOpen(false);
     ImagePicker.openPicker({
+      mediaType:"photo",
       multiple: true,
     }).then(data => {
+      interstitialAddGallery.load();
       props.addImages(data)
     }).catch((err) => {
       console.log(err)
@@ -139,6 +154,16 @@ function Home(props){
                   </View>
                 </TouchableOpacity>
             </View>
+            <View style={{padding:5,alignItems:"center",justifyContent:"center"}}>
+              <BannerAd
+                unitId={adHomeUnitId}
+                size={BannerAdSize.BANNER}
+                requestOptions={{ requestNonPersonalizedAdsOnly: true, }}
+                onAdLoaded={() => {
+                  console.log('Ads Loaded ');
+                }}
+              />
+            </View>
           <View style={{flexGrow:1,flexDirection:"column",justifyContent:"center",alignItems:"center",padding:5}}>
               <Button title={'Open Images From Gallery'} onPress={()=>handleOpenImagePicker()} iconStyle={{name:"images",color:"white",size:20}}/>
               <Button title={'Open Camera'} onPress={()=>handleOpenCamera()} iconStyle={{name:"camera",color:"white",size:22}}/>
@@ -175,6 +200,7 @@ function Home(props){
                 <Text style={{color:"lightgray",fontWeight:"bold",fontSize:13}}> Long Press to Reorder Pages</Text>
               </View>
             </View>
+
             <TouchableOpacity
                 style={{
                   margin:5,
@@ -266,7 +292,7 @@ function Home(props){
           />
         </View>
     }
-    <View>
+    <View style={{justifyContent:"center",}}>
       <Button title={"Convert to PDF"} onPress={()=>openPopUp()} iconStyle={{}}/>
       <Modal
         animationType="fade"

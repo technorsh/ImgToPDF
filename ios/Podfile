@@ -31,6 +31,8 @@ target 'ImgToPdf' do
 
   pod 'RNFileViewer', :path => '../node_modules/react-native-file-viewer'
 
+
+
   target 'ImgToPdfTests' do
     inherit! :complete
     # Pods for testing

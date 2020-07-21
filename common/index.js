@@ -1,5 +1,9 @@
 import FileViewer from 'react-native-file-viewer';
 import Share from "react-native-share";
+import  admob, {
+  InterstitialAd,
+  TestIds,
+} from '@react-native-firebase/admob';
 
 const openFile = (file) => {
   FileViewer.open(file , { showOpenWithDialog: true , showAppsSuggestions: true} )
@@ -23,5 +27,18 @@ const onShare = async (file) => {
   }
 }
 
+const adHomeUnitId =  __DEV__ ? TestIds.BANNER : "ca-app-pub-5432006428172552/2270330804";
+const adHistoryUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-5432006428172552/9801993002';
+const adPDFConversionUnitId = __DEV__ ? TestIds.INTERSTITIAL : 'ca-app-pub-5432006428172552/1295751362';
+const adAddGalleryUnitId = __DEV__ ? TestIds.INTERSTITIAL : 'ca-app-pub-5432006428172552/7586005152';
 
-export { openFile , onShare };
+const interstitialPDFConversion = InterstitialAd.createForAdRequest(adPDFConversionUnitId, {
+  requestNonPersonalizedAdsOnly: true,
+});
+
+const interstitialAddGallery = InterstitialAd.createForAdRequest(adAddGalleryUnitId, {
+  requestNonPersonalizedAdsOnly: true,
+});
+
+
+export {  openFile , onShare , adHomeUnitId , adHistoryUnitId ,interstitialPDFConversion , interstitialAddGallery };

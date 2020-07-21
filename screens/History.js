@@ -5,12 +5,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from "moment";
 import RNFS from "react-native-fs"
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import {
   DotIndicator,
 } from 'react-native-indicators';
+
 import uuid from "uuid/v4";
+import  admob, {
+  BannerAdSize,
+  BannerAd,
+  TestIds
+} from '@react-native-firebase/admob';
+
 import AlertComponent from "./../components/Alert";
-import { openFile , onShare } from "./../common";
+import { openFile , onShare , adHistoryUnitId } from "./../common";
 
 const styles = StyleSheet.create({
   btn: {
@@ -339,53 +347,64 @@ export default function History(props){
   }):null
 
   return(
-    <View style={{flexGrow:1,margin:10,marginTop:5}}>
-      <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",paddingBottom:5}}>
-        <View style={{alignContent:"center",alignItems:"flex-start"}}>
-          <Text style={{fontWeight:"bold",color:"#075E54",fontSize:14}}>PDF Files Location :</Text>
-          <Text style={{fontSize:12}}>/Internal Storage/ImgToPDF/</Text>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          style={{flexDirection:"row",backgroundColor:"grey",alignItems:"center",borderRadius:5,padding:5}}
-            onPress={() => alertFunc() }>
-            <View style={{paddingLeft:5}}>
-              <Ionicons name="md-trash" size={20} color="white" />
-            </View>
-          <Text style={{padding:5 , fontWeight:"bold", fontSize:12, color:"white",}}>Clear History</Text>
-          <AlertComponent
-            visible={alert}
-            title = "Do You Want to Clear History ?"
-            message = {"It will clear all the history (ᵔᴥᵔ) from here."}
-            icon = {{
-              "iconName":"md-trash",
-              "iconColor":"gray",
-              "iconSize":20
-            }}
-            okText={"Yes"}
-            cancelText={"No"}
-            onPressOK={()=>{alertHandle()}}
-            onPressCancel={()=>{setAlert(false)}}
-          />
-        </TouchableOpacity>
-      </View>
-      {
-        (Array.isArray(data))?
-        ((data.length)?
-          <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor:"transparent",marginBottom:30,}}>
-            <View>
-              {info}
-            </View>
-          </ScrollView>
-          :
-          <View style={{flexGrow:1,justifyContent:"center",alignItems:"center",marginTop:20}}>
-            <Text style={{fontWeight:"bold",color:"gray"}}>No History Available</Text>
-            <Text style={{fontWeight:"bold",color:"gray"}}>(｡◕‿◕｡)</Text>
-          </View>):
-          <View style={{alignItems:"center",marginTop:20}}>
-            <DotIndicator color="red" size={8}/>
+    <>
+      <View style={{flexGrow:1,margin:10,marginTop:5}}>
+        <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",paddingBottom:5}}>
+          <View style={{alignContent:"center",alignItems:"flex-start"}}>
+            <Text style={{fontWeight:"bold",color:"#075E54",fontSize:14}}>PDF Files Location :</Text>
+            <Text style={{fontSize:12}}>/Internal Storage/ImgToPDF/</Text>
           </View>
-      }
-    </View>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            style={{flexDirection:"row",backgroundColor:"grey",alignItems:"center",borderRadius:5,padding:5}}
+              onPress={() => alertFunc() }>
+              <View style={{paddingLeft:5}}>
+                <Ionicons name="md-trash" size={20} color="white" />
+              </View>
+            <Text style={{padding:5 , fontWeight:"bold", fontSize:12, color:"white",}}>Clear History</Text>
+            <AlertComponent
+              visible={alert}
+              title = "Do You Want to Clear History ?"
+              message = {"It will clear all the history (ᵔᴥᵔ) from here."}
+              icon = {{
+                "iconName":"md-trash",
+                "iconColor":"gray",
+                "iconSize":20
+              }}
+              okText={"Yes"}
+              cancelText={"No"}
+              onPressOK={()=>{alertHandle()}}
+              onPressCancel={()=>{setAlert(false)}}
+            />
+          </TouchableOpacity>
+        </View>
+        {
+          (Array.isArray(data))?
+          ((data.length)?
+            <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor:"transparent",marginBottom:80}}>
+              <View>
+                {info}
+              </View>
+            </ScrollView>:
+            <View style={{flexGrow:1,justifyContent:"center",alignItems:"center",marginTop:20}}>
+              <Text style={{fontWeight:"bold",color:"gray"}}>No History Available</Text>
+              <Text style={{fontWeight:"bold",color:"gray"}}>(｡◕‿◕｡)</Text>
+            </View>):
+            <View style={{alignItems:"center",marginTop:20}}>
+              <DotIndicator color="red" size={8}/>
+            </View>
+        }
+      </View>
+      <View style={{position:"absolute",bottom:0}}>
+        <BannerAd
+          unitId={adHistoryUnitId}
+          size={BannerAdSize.SMART_BANNER}
+          requestOptions={{ requestNonPersonalizedAdsOnly: true, }}
+          onAdLoaded={() => {
+            console.log('Ads Loaded ');
+          }}
+        />
+      </View>
+    </>
   )
 }
