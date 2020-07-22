@@ -19,10 +19,7 @@ import RNImageToPdf from "react-native-image-to-pdf";
 import RNFS from "react-native-fs";
 import moment from "moment";
 import { setImages } from "./../store/actions"
-import { openFile , onShare ,interstitialPDFConversion } from "./../common";
-import  admob, {
-  AdEventType,
-} from '@react-native-firebase/admob';
+import { openFile , onShare } from "./../common";
 import {
   PacmanIndicator,
 } from 'react-native-indicators';
@@ -41,14 +38,6 @@ class PDFForm extends React.Component{
       text:"Pdf-"+uuid().split("-")[0],
       loading:false,
     }
-  }
-
-  componentDidMount = () => {
-    interstitialPDFConversion.onAdEvent((type, error, reward) => {
-      if (type === AdEventType.LOADED) {
-        interstitialPDFConversion.show();
-      }
-    });
   }
 
   removeFileFromPath = (path) => {
@@ -93,7 +82,6 @@ class PDFForm extends React.Component{
         };
         if(this.state.loading){
           await RNImageToPdf.createPDFbyImages(options).then((response)=>{
-            interstitialPDFConversion.load();
             let path = RNFS.ExternalStorageDirectoryPath+"/ImageToPDF/";
             let date = moment();
             RNFS.mkdir(path).then(res => {

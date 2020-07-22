@@ -5,20 +5,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from "moment";
 import RNFS from "react-native-fs"
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import {
   DotIndicator,
 } from 'react-native-indicators';
-
 import uuid from "uuid/v4";
-import  admob, {
-  BannerAdSize,
-  BannerAd,
-  TestIds
-} from '@react-native-firebase/admob';
-
 import AlertComponent from "./../components/Alert";
-import { openFile , onShare , adHistoryUnitId } from "./../common";
+import { openFile , onShare } from "./../common";
 
 const styles = StyleSheet.create({
   btn: {
@@ -134,6 +126,7 @@ const HistoryListItem = (props) => {
        ],
        { cancelable: false }
      );
+     setLoaded(false);
     }
   }
 
@@ -158,12 +151,14 @@ const HistoryListItem = (props) => {
             }}
             >
             <View style={{flexDirection:"row",alignItems:"center"}}>
-              <Icon name="file-pdf-o" size={34} color="red" style={{padding:5}}/>
-              <View style={{flexGrow:1,flexDirection:"row",justifyContent:"space-between"}}>
+              <View>
+                <Icon name="file-pdf-o" size={30} color="red" style={{padding:5}}/>
+              </View>
+              <View style={{flexGrow:1,flexDirection:"row",justifyContent:"space-between",}}>
                 <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"center"}}>
                   <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <View style={{flexGrow:1,width:0,}}>
-                      <Text ellipsizeMode='tail' numberOfLines={1} style={{flexWrap:"wrap",paddingLeft:5,fontSize:14,fontWeight:"bold"}}>{filename} </Text>
+                    <View style={{flexGrow:1, width:0}}>
+                      <Text ellipsizeMode='tail' numberOfLines={1} style={{flexWrap:"wrap",paddingLeft:5,fontSize:14,fontWeight:"bold"}}>{filename}</Text>
                     </View>
                     <TouchableOpacity
                       underlayColor='gray'
@@ -176,12 +171,16 @@ const HistoryListItem = (props) => {
                     </TouchableOpacity>
                   </View>
                   <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-                    <Text style={{paddingLeft:5,paddingBottom:5,fontSize:12,fontWeight:"bold"}}>
-                        {mtime}
-                    </Text>
-                    <Text style={{paddingLeft:5,paddingBottom:5,paddingLeft:20,fontSize:12,fontWeight:"bold"}}>
-                        {((size)/(1024*1024)).toFixed(2)} MB
-                    </Text>
+                    <View style={{flexGrow:1,}}>
+                      <Text style={{paddingLeft:5,paddingBottom:5,fontSize:12,fontWeight:"bold"}}>
+                          {mtime}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text style={{paddingLeft:5,paddingBottom:5,marginLeft:10,color:"black",fontSize:12,fontWeight:"bold"}}>
+                          {((size)/(1024*1024)).toFixed(2)} MB
+                      </Text>
+                    </View>
                   </View>
                 </View>
                 <View style={{justifyContent:"space-between",flexDirection:"column"}}>
@@ -341,13 +340,12 @@ export default function History(props){
   let info = (Array.isArray(data)) ? data.map((data,index)=>{
     let file = data.file;
     let filename = data.file.split("/")[data.file.split("/").length - 1]
-    let mtime = moment(data.date).format("LLLL");
+    let mtime = moment(data.date).format("MMMM DD, YYYY HH:MM:SS A");
     let size = data.size
     return <HistoryListItem size={size} navigation={props.navigation} info={getInfo} key={"index-"+index} id={data.id} index={index} file={file} filename={filename} mtime={mtime} deleteInfo={deleteData}/>
   }):null
 
   return(
-    <>
       <View style={{flexGrow:1,margin:10,marginTop:5}}>
         <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",paddingBottom:5}}>
           <View style={{alignContent:"center",alignItems:"flex-start"}}>
@@ -381,7 +379,7 @@ export default function History(props){
         {
           (Array.isArray(data))?
           ((data.length)?
-            <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor:"transparent",marginBottom:80}}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor:"transparent",marginBottom:30}}>
               <View>
                 {info}
               </View>
@@ -395,16 +393,5 @@ export default function History(props){
             </View>
         }
       </View>
-      <View style={{position:"absolute",bottom:0}}>
-        <BannerAd
-          unitId={adHistoryUnitId}
-          size={BannerAdSize.SMART_BANNER}
-          requestOptions={{ requestNonPersonalizedAdsOnly: true, }}
-          onAdLoaded={() => {
-            console.log('Ads Loaded ');
-          }}
-        />
-      </View>
-    </>
   )
 }

@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.front" />
 
     <application
       android:name=".MainApplication"
@@ -36,8 +38,5 @@
             android:resource="@xml/file_viewer_provider_paths"
         />
       </provider>
-      <meta-data
-         android:name="com.google.android.gms.ads.APPLICATION_ID"
-         android:value="ca-app-pub-5432006428172552~3350751835"/>
     </application>
 </manifest>

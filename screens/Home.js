@@ -9,6 +9,7 @@ import {
     StyleSheet,
     Text,
     View,
+    Linking,
     Image,
     ScrollView,
     TouchableOpacity,
@@ -28,14 +29,6 @@ import PDFForm from "./../components/PDFForm";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AlertComponent from "./../components/Alert";
 import uuid from "uuid/v4";
-import  admob, {
-  BannerAdSize,
-  BannerAd,
-  AdEventType
-} from '@react-native-firebase/admob';
-
-import { adHomeUnitId , interstitialAddGallery } from "./../common";
-
 const { width , height } = Dimensions.get("window");
 
 function Home(props){
@@ -45,14 +38,31 @@ function Home(props){
   const [ alert , setAlert ] = useState(false);
   const [ openPDFMenu , setOpenPDFMenu ] = useState(false);
 
-
   useEffect(()=>{
-    SplashScreen.hide();
-    interstitialAddGallery.onAdEvent((type, error, reward) => {
-      if (type === AdEventType.LOADED) {
-        interstitialAddGallery.show();
-      }
+    props.navigation.setOptions({
+        headerRight: () => <View style={{flexDirection:"row",alignItems:"center"}}>
+        <TouchableOpacity
+          onPress={() => ( Linking.openURL("https://rzp.io/l/29ds4G2"))}
+          activeOpacity={0.6}
+          style={{padding:10}}
+          >
+          <Image
+              style={{width:18,height:18}}
+              source={require('./../assets/images/donation.webp')}
+          />
+        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('History')}
+            activeOpacity={0.6}
+            style={{padding:10}}
+            >
+            <View style={{flexDirection:"row",alignItems:"center"}}>
+              <MaterialIcons name="history" size={22} color="grey"/>
+            </View>
+          </TouchableOpacity>
+        </View>,
     });
+    SplashScreen.hide();
     console.log("App Started...")
   },[]);
 
@@ -100,7 +110,6 @@ function Home(props){
       mediaType:"photo",
       multiple: true,
     }).then(data => {
-      interstitialAddGallery.load();
       props.addImages(data)
     }).catch((err) => {
       console.log(err)
@@ -142,28 +151,6 @@ function Home(props){
     {
         !( Array.isArray(props.images) && props.images.length ) ?
         <View style={{flexGrow:1}}>
-            <View style={{alignItems:"flex-end",margin:5,marginBottom:0,marginLeft:0,}}>
-                <TouchableOpacity
-                  onPress={() => props.navigation.navigate('History')}
-                  activeOpacity={0.6}
-                  style={{flexWrap:"wrap",padding:5,backgroundColor:"grey",borderRadius:5,paddingLeft:10,paddingRight:10}}
-                  >
-                  <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <MaterialIcons name="history" size={20} color="white"/>
-                    <Text style={{fontWeight:"bold",color:"white"}}> History</Text>
-                  </View>
-                </TouchableOpacity>
-            </View>
-            <View style={{padding:5,alignItems:"center",justifyContent:"center"}}>
-              <BannerAd
-                unitId={adHomeUnitId}
-                size={BannerAdSize.BANNER}
-                requestOptions={{ requestNonPersonalizedAdsOnly: true, }}
-                onAdLoaded={() => {
-                  console.log('Ads Loaded ');
-                }}
-              />
-            </View>
           <View style={{flexGrow:1,flexDirection:"column",justifyContent:"center",alignItems:"center",padding:5}}>
               <Button title={'Open Images From Gallery'} onPress={()=>handleOpenImagePicker()} iconStyle={{name:"images",color:"white",size:20}}/>
               <Button title={'Open Camera'} onPress={()=>handleOpenCamera()} iconStyle={{name:"camera",color:"white",size:22}}/>

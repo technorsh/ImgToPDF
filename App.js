@@ -8,7 +8,6 @@ import { StatusBar ,View, Text, TouchableOpacity } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import HomeMenu from "./components/HomeMenu";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 enableScreens();
@@ -29,7 +28,6 @@ export default function App(){
                   <MaterialIcons name="picture-as-pdf" size={20} color={"grey"}/>
                   <Text style={{fontWeight:"bold",fontSize:18,color:"grey"}}> Image to PDF Converter</Text>
                 </View>,
-                headerRight: () => <HomeMenu/>,
               }}/>
               <Stack.Screen name="History" component={History} options={{ title: 'History' }}/>
             </Stack.Navigator>
