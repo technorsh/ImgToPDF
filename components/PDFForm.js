@@ -37,6 +37,7 @@ class PDFForm extends React.Component{
       isSelected :false,
       text:"Pdf-"+uuid().split("-")[0],
       loading:false,
+      exist:false
     }
   }
 
@@ -62,106 +63,129 @@ class PDFForm extends React.Component{
     })
     setTimeout(
       this.myAsyncPDFFunction,
-      2000
+      1000
     )
   }
 
+
+  checkName = async (value) => {
+      let newpath = RNFS.ExternalStorageDirectoryPath+"/ImageToPDF/"+value+".pdf";
+      this.setState({text:value})
+      let exist = await RNFS.exists(newpath);
+      this.setState({exist})
+    }
+
   myAsyncPDFFunction = async () => {
-    var filename = this.state.text.split(".")[0]+".pdf";
-    var path = this.getFilePath();
-    var quality = (this.state.value/100);
-    try {
-        const options = {
-            imagePaths: path,
-            name:filename,
-            maxSize: { // optional maximum image dimension - larger images will be resized
-                width: 900,
-                height: Math.round(height / width * 900),
-            },
-            quality: quality, // optional compression paramter
-        };
-        if(this.state.loading){
-          await RNImageToPdf.createPDFbyImages(options).then((response)=>{
-            let path = RNFS.ExternalStorageDirectoryPath+"/ImageToPDF/";
-            let date = moment();
-            RNFS.mkdir(path).then(res => {
-              RNFS.moveFile(response.filePath,path+filename).then(res => {
-                RNFS.stat(path+filename).then((res)=>{
-                  this.props.setImages([]);
-                  AsyncStorage.getItem('downloaded',(err,result) => {
-                     let prevData = JSON.parse(result);
-                     if(result!==null){
-                         let newDataEnter = {
-                             "id":uuid(),
-                             "file":res.path,
-                             "date":date,
-                             "size":res.size
-                         }
-                         prevData.push(newDataEnter)
-                         AsyncStorage.setItem('downloaded', JSON.stringify(prevData),(err)=>{
-                         if(err!==null){
-                             console.log(err)
-                         }
-                         });
-                     }
-                     else{
-                         AsyncStorage.setItem('downloaded', JSON.stringify([{
-                             "id":uuid(),
-                             "file":res.path,
-                             "date":date,
-                             "size":res.size
-                         }]),(err)=>{
-                             if(err!==null){
-                                 alert(err)
-                             }
-                         });
-                     }
-                   });
-                   ToastAndroid.showWithGravity(
-                     "Succesfully Converted to PDF !!!",
-                     ToastAndroid.LONG,
-                     ToastAndroid.BOTTOM
-                   );
-                   Alert.alert(
-                    "File Location :",
-                    path+filename,
-                    [
-                      { text :"share", onPress : () => onShare("file://"+path+filename) },
-                      { text :"open", onPress : () => openFile(path+filename) },
-                      { text: "OK", onPress: () => {} },
-                    ],
-                    { cancelable: false }
-                  );
-                  this.setState({
-                    loading:false
+    console.log(this.state.exist)
+    if(!this.state.exist){
+      var filename = this.state.text.split(".")[0]+".pdf";
+      var path = this.getFilePath();
+      var quality = (this.state.value/100);
+      try {
+          const options = {
+              imagePaths: path,
+              name:filename,
+              maxSize: { // optional maximum image dimension - larger images will be resized
+                  width: 900,
+                  height: Math.round(height / width * 900),
+              },
+              quality: quality, // optional compression paramter
+          };
+          if(this.state.loading){
+            await RNImageToPdf.createPDFbyImages(options).then((response)=>{
+              let path = RNFS.ExternalStorageDirectoryPath+"/ImageToPDF/";
+              let date = moment();
+              RNFS.mkdir(path).then(res => {
+                RNFS.moveFile(response.filePath,path+filename).then(res => {
+                  RNFS.stat(path+filename).then((res)=>{
+                    this.props.setImages([]);
+                    AsyncStorage.getItem('downloaded',(err,result) => {
+                       let prevData = JSON.parse(result);
+                       if(result!==null){
+                           let newDataEnter = {
+                               "id":uuid(),
+                               "file":res.path,
+                               "date":date,
+                               "size":res.size
+                           }
+                           prevData.push(newDataEnter)
+                           AsyncStorage.setItem('downloaded', JSON.stringify(prevData),(err)=>{
+                           if(err!==null){
+                               console.log(err)
+                           }
+                           });
+                       }
+                       else{
+                           AsyncStorage.setItem('downloaded', JSON.stringify([{
+                               "id":uuid(),
+                               "file":res.path,
+                               "date":date,
+                               "size":res.size
+                           }]),(err)=>{
+                               if(err!==null){
+                                   alert(err)
+                               }
+                           });
+                       }
+                     });
+                     ToastAndroid.showWithGravity(
+                       "Succesfully Converted to PDF !!!",
+                       ToastAndroid.LONG,
+                       ToastAndroid.BOTTOM
+                     );
+                     Alert.alert(
+                      "File Location :",
+                      path+filename,
+                      [
+                        { text :"share", onPress : () => onShare("file://"+path+filename) },
+                        { text :"open", onPress : () => openFile(path+filename) },
+                        { text: "OK", onPress: () => {} },
+                      ],
+                      { cancelable: false }
+                    );
+                    this.setState({
+                      loading:false
+                    })
+                    this.props.close();
+                  }).catch((err)=>{
+                    this.setState({
+                      loading:false
+                    })
+                    this.props.close();
+                    console.log(err);
                   })
-                  this.props.close();
                 }).catch((err)=>{
                   this.setState({
                     loading:false
                   })
-                  this.props.close();
-                  console.log(err);
+                  console.log(err)
                 })
               }).catch((err)=>{
                 this.setState({
                   loading:false
                 })
-                console.log(err)
               })
-            }).catch((err)=>{
-              this.setState({
-                loading:false
-              })
-            })
-          });
-        }
-    } catch(e) {
-       this.setState({
-         loading:false
-       })
-       console.log(e);
+            });
+          }
+      } catch(e) {
+         this.setState({
+           loading:false
+         })
+         console.log(e);
+      }
+    }else{
+      Alert.alert(
+       "PDF File Name Already Exist !!",
+       "Choose Another PDF File Name : - )",
+       [
+         { text: "OK", onPress: () => {} },
+       ],
+       { cancelable: false }
+     );
     }
+    this.setState({
+      loading:false
+    })
   }
   render(){
     const { value , isSelected , text , loading } = this.state;
@@ -172,12 +196,15 @@ class PDFForm extends React.Component{
         </View>
         <View style={{padding:20,backgroundColor:"#ffffff",elevation:5,borderBottomLeftRadius:10,borderBottomRightRadius:10}}>
         <View>
+        <View style={{alignItems:"center",paddingBottom:10}}>
+          {
+            this.state.exist?<Text style={{fontWeight:"bold",fontSize:12,color:"red"}}>Name Already Exist !!</Text>:null
+          }
+        </View>
           <Text style={{fontWeight:"bold",fontSize:16}}>PDF file name</Text>
             <TextInput
               placeholder="Enter name for the pdf"
-              onChangeText={value => this.setState({
-                text:value
-              })}
+              onChangeText={value => this.checkName(value)}
               value={text}
               theme={{colors: {text: 'green', primary: 'yellow'}}}
               style={{fontWeight:"bold",color:"red"}}
@@ -222,7 +249,7 @@ class PDFForm extends React.Component{
             <View/>
           }
           <View style={{flexDirection:"row",justifyContent:"space-around",marginTop:10}}>
-            <Button title="Cancel" onPress={()=>this.props.close()}/>
+            <Button title="Cancel" onPress={()=>this.props.close()} disabled={this.state.loading}/>
             <Button title="Convert" onPress={()=>this.handleLoading()} disabled={this.state.loading}/>
           </View>
         </View>
