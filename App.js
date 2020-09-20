@@ -1,10 +1,11 @@
 import React from 'react';
-import Home from "./screens/Home";
+import ImgToPDFConverter from "./screens/ImgToPDFConverter";
 import History from "./screens/History";
+import ImagePlate from "./screens/ImagePlate";
 import store from "./store"
 import { Provider , connect } from 'react-redux'
 import { enableScreens } from "react-native-screens";
-import { StatusBar ,View, Text, TouchableOpacity } from "react-native";
+import { StatusBar ,View, Text, TouchableOpacity , Image } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -21,15 +22,35 @@ export default function App(){
       <Provider store={store}>
         <SafeAreaProvider style={{ flex: 1 }}>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
-              <Stack.Screen name="Home" component={Home} options={{
+            <Stack.Navigator initialRouteName="ImgToPDFConverter">
+              <Stack.Screen name="ImgToPDFConverter" component={ImgToPDFConverter} options={{
                 title: '',
                 headerLeft: () => <View style={{flexDirection:"row",marginLeft:10,alignItems:"center"}}>
-                  <MaterialIcons name="picture-as-pdf" size={20} color={"grey"}/>
+                  <Image
+                      style={{width:24,height:24}}
+                      source={require('./assets/images/logo.webp')}
+                  />
                   <Text style={{fontWeight:"bold",fontSize:18,color:"grey"}}> Image to PDF Converter</Text>
                 </View>,
               }}/>
-              <Stack.Screen name="History" component={History} options={{ title: 'History' }}/>
+              <Stack.Screen  name="ImagePlate" component={ImagePlate}
+                options={{
+                  title: '',
+                  headerLeft : () => <View style={{flexDirection:"row",marginLeft:15,alignItems:"center"}}>
+                    <Image
+                        style={{width:24,height:24}}
+                        source={require('./assets/images/register.webp')}
+                    />
+                    <Text style={{fontWeight:"bold",fontSize:18,color:"grey",paddingLeft:5}}> Edit Selected Pages</Text>
+                  </View>,
+                }}/>
+              <Stack.Screen name="History" component={History} options={{ title: '', headerLeft : () => <View style={{flexDirection:"row",marginLeft:15,alignItems:"center"}}>
+                <Image
+                    style={{width:24,height:24}}
+                    source={require('./assets/images/history.webp')}
+                />
+                <Text style={{fontWeight:"bold",fontSize:18,color:"grey",paddingLeft:5}}> History</Text>
+              </View>, }}/>
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

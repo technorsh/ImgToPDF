@@ -1,4 +1,10 @@
 rootProject.name = 'ImgToPdf'
+include ':openCVLibrary310'
+project(':openCVLibrary310').projectDir = new File(rootProject.projectDir,'../node_modules/react-native-document-scanner/android/openCVLibrary310')
+include ':react-native-document-scanner'
+project(':react-native-document-scanner').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-document-scanner/android')
+include ':react-native-pdf-to-image'
+project(':react-native-pdf-to-image').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-pdf-to-image/android')
 include ':react-native-file-viewer'
 project(':react-native-file-viewer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-file-viewer/android')
 include ':react-native-splash-screen'

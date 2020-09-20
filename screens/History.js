@@ -1,5 +1,5 @@
 import React ,{useState,useEffect} from "react";
-import {Modal,Linking ,ToastAndroid,Alert ,StyleSheet, View , TextInput,TouchableOpacity , Text, ScrollView } from "react-native"
+import {Modal,Linking ,BackHandler,ToastAndroid,Alert ,StyleSheet, View , TextInput,TouchableOpacity , Text, ScrollView } from "react-native"
 import AsyncStorage from "@react-native-community/async-storage"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from "moment";
@@ -275,6 +275,10 @@ export default function History(props){
 
   const getInfo = async () => {
     await AsyncStorage.getItem('downloaded', (err, result) => {
+      // console.log(result)
+      // RNPdfToImage.convert("file://"+testPDF).then((res)=>{
+      //   console.log(res)
+      // });
       if(result!==null){
         let asyncStorageData = JSON.parse(result).reverse();
         setData(asyncStorageData);
@@ -354,7 +358,7 @@ export default function History(props){
           </View>
           <TouchableOpacity
             activeOpacity={0.6}
-            style={{flexDirection:"row",backgroundColor:"grey",alignItems:"center",borderRadius:5,padding:5}}
+            style={{flexDirection:"row",backgroundColor:"#FDA549",alignItems:"center",borderRadius:5,padding:5}}
               onPress={() => alertFunc() }>
               <View style={{paddingLeft:5}}>
                 <Ionicons name="md-trash" size={20} color="white" />
@@ -379,7 +383,7 @@ export default function History(props){
         {
           (Array.isArray(data))?
           ((data.length)?
-            <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor:"transparent",marginBottom:30}}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{backgroundColor:"transparent",marginBottom:30,marginTop:2}}>
               <View>
                 {info}
               </View>

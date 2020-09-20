@@ -33,6 +33,10 @@ target 'ImgToPdf' do
 
 
 
+  pod 'RNPdfScanner', :path => '../node_modules/react-native-document-scanner'
+
+  pod 'react-native-document-scanner', :path => '../node_modules/react-native-document-scanner'
+
   target 'ImgToPdfTests' do
     inherit! :complete
     # Pods for testing

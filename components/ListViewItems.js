@@ -36,9 +36,12 @@ function ListViewItems(props){
 
   const { item , drag , isActive , index ,path } = props;
 
+  // console.log(item)
+
   const date = item.modificationDate/1000;
   const file = item.path.split("/")[item.path.split("/").length -1 ];
-  const filename = file.split("-")[file.split("-").length -1];
+  const filename = file.split("-")[0];
+  const extension = file.split(".")[file.split(".").length - 1];
 
   const editImage = ( path , index ) => {
     ImagePicker.openCropper({
@@ -97,9 +100,8 @@ function ListViewItems(props){
             <View style={{flexGrow:1,flexDirection:"column",justifyContent:"space-between",padding:5}}>
               <View style={{flexGrow:1,flexDirection:"column",justifyContent:"space-around"}}>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <Icon name="file-photo-o" size={12} color="grey" />
                     <View style={{flexGrow:1,width:0}}>
-                      <Text ellipsizeMode='tail' numberOfLines={1} style={{fontWeight:"bold",flexWrap:"wrap",color:"gray"}}> {filename} </Text>
+                      <Text ellipsizeMode='tail' numberOfLines={1} style={{fontWeight:"bold",flexWrap:"wrap",color:"gray"}}> ImgToPDFConverter-{index+1}.{extension} </Text>
                     </View>
                 </View>
                 <View style={{marginTop:2,flexDirection:"row",justifyContent:"space-around"}}>
